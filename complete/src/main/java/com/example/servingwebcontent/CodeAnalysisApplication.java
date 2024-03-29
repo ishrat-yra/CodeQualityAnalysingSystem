@@ -16,10 +16,10 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 @ComponentScan("com.example")
 @EnableJpaRepositories("com.example.repository")
 @EnableConfigurationProperties(StorageProperties.class)
-public class ServingWebContentApplication {
+public class CodeAnalysisApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ServingWebContentApplication.class, args);
+        SpringApplication.run(CodeAnalysisApplication.class, args);
     }
 
     @Bean

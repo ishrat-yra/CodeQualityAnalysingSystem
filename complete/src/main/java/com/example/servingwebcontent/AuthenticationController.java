@@ -4,30 +4,22 @@ import com.example.dto.UserDto;
 import com.example.entity.User;
 import com.example.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
 @Controller
-public class GreetingController {
+public class AuthenticationController {
 
 	private UserService userService;
 
-	public GreetingController(UserService userService) {
+	public AuthenticationController(UserService userService) {
 		this.userService = userService;
-	}
-
-	@GetMapping("/greeting")
-	public String greeting(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
-		model.addAttribute("name", name);
-		return "greeting";
 	}
 
 	@GetMapping("/login")
