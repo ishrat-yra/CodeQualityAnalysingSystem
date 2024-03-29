@@ -37,27 +37,34 @@
                     <form
                             method="post"
                             th:action="@{/login}"
+                            th:object="${user}"
                             class="form-horizontal"
-                            role="form"
-                    >
+                            role="form">
+
                         <div class="mb-3">
-                            <label for="username" class="control-label">Email *</label>
-                            <input type="text"
-                                   id="username"
-                                   name="username"
-                                   class="form-control"
-                                   placeholder="Email"
-                            />
+                            <label class="form-label">Email *</label>
+                            <input class="form-control"
+                                   id="email"
+                                   name="email"
+                                   placeholder="Enter email address"
+                                   th:field="*{email}"
+                                   type="email"/>
+                            <p th:errors="*{email}" class="text-danger"
+                               th:if="${#fields.hasErrors('email')}">
+                            </p>
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="control-label">Password *</label>
-                            <input type="password"
+                            <label class="form-label">Password *</label>
+                            <input class="form-control"
                                    id="password"
                                    name="password"
-                                   class="form-control"
-                                   placeholder="Password"
-                            />
+                                   placeholder="Enter password"
+                                   th:field="*{password}"
+                                   type="password"/>
+                            <p th:errors="*{password}" class="text-danger"
+                               th:if="${#fields.hasErrors('password')}">
+                            </p>
                         </div>
 
                         <div class="mb-3">

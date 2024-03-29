@@ -3,6 +3,8 @@ package com.example.servingwebcontent;
 import com.example.dto.UserDto;
 import com.example.entity.User;
 import com.example.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class AuthenticationController {
@@ -23,8 +26,39 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/login")
-	public String loginForm() {
+	public String loginForm(Model model) {
+		model.addAttribute("user", new UserDto());
 		return "login";
+	}
+
+	@PostMapping("/login")
+	public String handleLogin(@Valid @ModelAttribute("user") UserDto user,
+							  BindingResult result,
+							  HttpServletRequest request,
+							  Model model) {
+
+		User existing = userService.findByEmailAndPassword(user.getEmail(), user.getPassword());
+
+		if (existing == null) {
+			result.rejectValue("email", null, "There is no account registered with that email");
+		}
+
+		if (result.hasErrors()) {
+			model.addAttribute("user", user);
+			return "login";
+		}
+
+		request.getSession().setAttribute("loggedInUser", existing);
+
+		return "redirect:/users";
+	}
+
+	@GetMapping("/logout")
+	public String logout(HttpServletRequest request) {
+
+		request.getSession().invalidate();
+
+		return "redirect:/login";
 	}
 
 	@GetMapping("/register")
@@ -37,22 +71,37 @@ public class AuthenticationController {
 	public String registration(@Valid @ModelAttribute("user") UserDto user,
 							   BindingResult result,
 							   Model model){
+
 		User existing = userService.findByEmail(user.getEmail());
+
 		if (existing != null) {
 			result.rejectValue("email", null, "There is already an account registered with that email");
 		}
+
 		if (result.hasErrors()) {
 			model.addAttribute("user", user);
 			return "register";
 		}
+
 		userService.saveUser(user);
+
 		return "redirect:/register?success";
 	}
 
 	@GetMapping("/users")
-	public String listRegisteredUsers(Model model){
+	public String listRegisteredUsers(Model model, HttpServletRequest request) {
+
+		if (!isUserLoggedIn(request.getSession(false))) {
+			return "redirect:/login";
+		}
+
 		List<UserDto> users = userService.findAllUsers();
 		model.addAttribute("users", users);
+
 		return "users";
+	}
+
+	private boolean isUserLoggedIn(HttpSession session) {
+		return Objects.nonNull(session) && Objects.nonNull(session.getAttribute("loggedInUser"));
 	}
 }

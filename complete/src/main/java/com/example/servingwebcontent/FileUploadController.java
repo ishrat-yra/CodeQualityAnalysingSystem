@@ -3,6 +3,8 @@ package com.example.servingwebcontent;
 import com.example.service.StorageFileNotFoundException;
 import com.example.service.StorageService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -29,7 +32,11 @@ public class FileUploadController {
 	}
 
 	@GetMapping("/")
-	public String listUploadedFiles(Model model) throws IOException {
+	public String listUploadedFiles(Model model, HttpServletRequest request) throws IOException {
+
+		if (!isUserLoggedIn(request.getSession(false))) {
+			return "redirect:/login";
+		}
 
 		model.addAttribute("files", storageService.loadAll().map(
 				path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
@@ -41,7 +48,7 @@ public class FileUploadController {
 
 	@GetMapping("/files/{filename:.+}")
 	@ResponseBody
-	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+	public ResponseEntity<Resource> serveFile(@PathVariable String filename, HttpServletRequest request) {
 
 		Resource file = storageService.loadAsResource(filename);
 
@@ -54,7 +61,12 @@ public class FileUploadController {
 
 	@PostMapping("/")
 	public String handleFileUpload(@RequestParam("file") MultipartFile file,
-			RedirectAttributes redirectAttributes) {
+								   HttpServletRequest request,
+								   RedirectAttributes redirectAttributes) {
+
+		if (!isUserLoggedIn(request.getSession(false))) {
+			return "redirect:/login";
+		}
 
 		storageService.store(file);
 		redirectAttributes.addFlashAttribute("message",
@@ -66,6 +78,10 @@ public class FileUploadController {
 	@ExceptionHandler(StorageFileNotFoundException.class)
 	public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
 		return ResponseEntity.notFound().build();
+	}
+
+	private boolean isUserLoggedIn(HttpSession session) {
+		return Objects.nonNull(session) && Objects.nonNull(session.getAttribute("loggedInUser"));
 	}
 
 }
