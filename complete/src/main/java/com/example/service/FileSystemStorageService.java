@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.util.ZipUnzipUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,16 +20,18 @@ import java.util.stream.Stream;
 @Service
 public class FileSystemStorageService implements StorageService {
 
-	private final Path rootLocation;
+	private final Path zipLocation;
+	private final Path unzipLocation;
 
 	@Autowired
 	public FileSystemStorageService(StorageProperties properties) {
-        
-        if(properties.getLocation().trim().length() == 0){
-            throw new StorageException("File upload location can not be Empty."); 
-        }
 
-		this.rootLocation = Paths.get(properties.getLocation());
+		if (properties.getZipLocation().length() == 0 || properties.getUnzipLocation().length() == 0) {
+			throw new StorageException("File upload location can not be Empty.");
+		}
+
+		this.zipLocation = Paths.get(properties.getZipLocation());
+		this.unzipLocation = Paths.get(properties.getUnzipLocation());
 	}
 
 	@Override
@@ -37,10 +40,10 @@ public class FileSystemStorageService implements StorageService {
 			if (file.isEmpty()) {
 				throw new StorageException("Failed to store empty file.");
 			}
-			Path destinationFile = this.rootLocation.resolve(
-					Paths.get(file.getOriginalFilename()))
-					.normalize().toAbsolutePath();
-			if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
+			Path destinationFile = this.zipLocation.resolve(
+					Paths.get(file.getOriginalFilename())).normalize().toAbsolutePath();
+
+			if (!destinationFile.getParent().equals(this.zipLocation.toAbsolutePath())) {
 				// This is a security check
 				throw new StorageException(
 						"Cannot store file outside current directory.");
@@ -56,11 +59,22 @@ public class FileSystemStorageService implements StorageService {
 	}
 
 	@Override
+	public void unzip(String fileName) {
+		try {
+
+			ZipUnzipUtils.unzip(this.zipLocation.toString() + "/" + fileName, this.unzipLocation.toString());
+
+		} catch (IOException e) {
+			throw new StorageException("Failed to store file.", e);
+		}
+	}
+
+	@Override
 	public Stream<Path> loadAll() {
 		try {
-			return Files.walk(this.rootLocation, 1)
-				.filter(path -> !path.equals(this.rootLocation))
-				.map(this.rootLocation::relativize);
+			return Files.walk(this.zipLocation, 1)
+				.filter(path -> !path.equals(this.zipLocation))
+				.map(this.zipLocation::relativize);
 		}
 		catch (IOException e) {
 			throw new StorageException("Failed to read stored files", e);
@@ -70,7 +84,7 @@ public class FileSystemStorageService implements StorageService {
 
 	@Override
 	public Path load(String filename) {
-		return rootLocation.resolve(filename);
+		return zipLocation.resolve(filename);
 	}
 
 	@Override
@@ -94,13 +108,13 @@ public class FileSystemStorageService implements StorageService {
 
 	@Override
 	public void deleteAll() {
-		FileSystemUtils.deleteRecursively(rootLocation.toFile());
+		FileSystemUtils.deleteRecursively(zipLocation.toFile());
 	}
 
 	@Override
 	public void init() {
 		try {
-			Files.createDirectories(rootLocation);
+			Files.createDirectories(zipLocation);
 		}
 		catch (IOException e) {
 			throw new StorageException("Could not initialize storage", e);

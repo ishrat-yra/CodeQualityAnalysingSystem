@@ -1,0 +1,6 @@
+projectKey=simple_spring_boot
+serverUrl=http://localhost:9000
+serverVersion=10.5.1.90531
+dashboardUrl=http://localhost:9000/dashboard?id=simple_spring_boot
+ceTaskId=f1201205-1533-46e5-b598-183081cbace7
+ceTaskUrl=http://localhost:9000/api/ce/task?id=f1201205-1533-46e5-b598-183081cbace7

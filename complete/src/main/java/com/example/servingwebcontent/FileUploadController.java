@@ -1,5 +1,6 @@
 package com.example.servingwebcontent;
 
+import com.example.service.StorageException;
 import com.example.service.StorageFileNotFoundException;
 import com.example.service.StorageService;
 
@@ -19,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import com.example.util.FileUtils;
 
 @Controller
 @RequestMapping("/attachment")
@@ -68,9 +71,45 @@ public class FileUploadController {
 			return "redirect:/login";
 		}
 
-		storageService.store(file);
-		redirectAttributes.addFlashAttribute("message",
-				"You successfully uploaded " + file.getOriginalFilename() + "!");
+		if (!FileUtils.isZipFile(file)) {
+			redirectAttributes.addFlashAttribute("message","Only Zip Files are allowed!");
+			return "redirect:/attachment/";
+		}
+
+		try {
+			storageService.store(file);
+			redirectAttributes.addFlashAttribute("message",
+												 "You successfully uploaded " + file.getOriginalFilename());
+
+		} catch (StorageException storageException) {
+			redirectAttributes.addFlashAttribute("message",
+												 "Error occured while uploading " + file.getOriginalFilename());
+
+		}
+
+		return "redirect:/attachment/";
+	}
+
+	@GetMapping("/unzip")
+	public String unzipFile(@RequestParam("fileName") String fileName,
+						   HttpServletRequest request,
+						   RedirectAttributes redirectAttributes) {
+
+		if (!isUserLoggedIn(request.getSession(false))) {
+			return "redirect:/login";
+		}
+
+		try {
+			storageService.unzip(fileName);
+
+			redirectAttributes.addFlashAttribute("message",
+												 "You successfully unzipped " + fileName + "!");
+
+		} catch (StorageException storageException) {
+			redirectAttributes.addFlashAttribute("message",
+												 "Error occured while unzipping " + fileName + "!");
+
+		}
 
 		return "redirect:/attachment/";
 	}
