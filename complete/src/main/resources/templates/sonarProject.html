@@ -45,6 +45,25 @@
 	</div>
 
 	<div class="card-body">
+		<table class="table table-striped table-bordered table-hover">
+			<thead class="table-dark">
+			<tr>
+				<th>Project Name</th>
+				<th>Project Key</th>
+				<th>Created</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="project: ${allProjects}">
+				<td th:text="${project.name}"></td>
+				<td th:text="${project.key}"></td>
+				<td th:text="${project.created}"></td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="card-body">
 		<form method="post" role="form" th:action="@{/sonar/project}" th:object="${project}">
 
 			<div class="form-group mb-3">

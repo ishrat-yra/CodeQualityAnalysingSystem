@@ -65,6 +65,7 @@ public class SonarController {
 		}
 
 		model.addAttribute("project", new SonarProject());
+		model.addAttribute("allProjects", projectService.findAll());
 
 		return "sonarProject";
 	}
@@ -112,7 +113,7 @@ public class SonarController {
 
 		projectService.saveProject(new Project(project.getName(), project.getKey()));
 
-		return REDIRECT_URL_PREFIX + "/projectList";
+		return REDIRECT_URL_PREFIX + "/project";
 	}
 
 	@GetMapping("/runScanner")
