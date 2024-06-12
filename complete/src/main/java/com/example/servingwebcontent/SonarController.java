@@ -1,6 +1,8 @@
 package com.example.servingwebcontent;
 
 import com.example.dto.SonarProject;
+import com.example.entity.Project;
+import com.example.service.ProjectService;
 import com.example.service.SonarScannerService;
 import com.example.util.Url;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,6 +52,10 @@ public class SonarController {
 
 	@Autowired
 	private SonarScannerService scannerService;
+
+	@Autowired
+	private ProjectService projectService;
+
 
 	@GetMapping("/project")
 	public String show(Model model, HttpServletRequest request) {
@@ -103,6 +109,8 @@ public class SonarController {
 		model.addAttribute("response", response.getBody());
 
 		System.out.println(response.getBody());
+
+		projectService.saveProject(new Project(project.getName(), project.getKey()));
 
 		return REDIRECT_URL_PREFIX + "/projectList";
 	}
