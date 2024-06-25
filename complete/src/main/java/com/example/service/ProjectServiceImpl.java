@@ -28,4 +28,9 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Project> findAll() {
         return projectRepository.findAll();
     }
+
+    @Override
+    public Project find(Long id) {
+        return projectRepository.findById(id).orElse(null);
+    }
 }

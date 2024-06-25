@@ -19,10 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
@@ -114,6 +111,20 @@ public class SonarController {
 		projectService.saveProject(new Project(project.getName(), project.getKey()));
 
 		return REDIRECT_URL_PREFIX + "/project";
+	}
+
+	@GetMapping("/projectDetails/{id}")
+	public String projectDetails(@PathVariable Long id,
+								 Model model,
+								 HttpServletRequest request) {
+
+		if (!isUserLoggedIn(request.getSession(false))) {
+			return "redirect:/login";
+		}
+
+		model.addAttribute("project", projectService.find(id));
+
+		return "projectDetails";
 	}
 
 	@GetMapping("/runScanner")

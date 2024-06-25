@@ -9,4 +9,6 @@ public interface ProjectService {
     void saveProject(Project project);
 
     List<Project> findAll();
+
+    Project find(Long id);
 }
