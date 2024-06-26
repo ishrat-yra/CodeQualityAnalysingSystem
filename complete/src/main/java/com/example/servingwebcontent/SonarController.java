@@ -55,14 +55,20 @@ public class SonarController {
 
 
 	@GetMapping("/project")
-	public String show(Model model, HttpServletRequest request) {
+	public String show(@RequestParam(defaultValue = "false") boolean create,
+					   Model model,
+					   HttpServletRequest request) {
 
 		if (!isUserLoggedIn(request.getSession(false))) {
 			return "redirect:/login";
 		}
 
-		model.addAttribute("project", new SonarProject());
 		model.addAttribute("allProjects", projectService.findAll());
+		model.addAttribute("createProject", create);
+
+		if (create) {
+			model.addAttribute("project", new SonarProject());
+		}
 
 		return "sonarProject";
 	}

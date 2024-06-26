@@ -11,7 +11,7 @@
           crossorigin="anonymous">
     <style>
         .move-down {
-            margin-top: 50px; /* Adjust this value as needed */
+            margin-top: 50px;
         }
     </style>
 </head>
@@ -26,11 +26,13 @@
 </nav>
 <div class="container">
     <div class="row">
-        <h1 class="text-center"> Welcome to Code Quality Analysing System!!!</h1>
+        <h1 class="text-center">Welcome to Code Quality Analysing System</h1>
     </div>
     <div class="move-down d-grid gap-3 col-4 mx-auto">
-        <a type="button" class="btn btn-dark btn-lg" href="/register">Register</a>
-        <a type="button" class="btn btn-dark btn-lg" href="/login">Login</a>
+        <a type="button" class="btn btn-dark btn-lg" href="/sonar/project?create=true">SonarQube Project</a>
+        <a type="button" class="btn btn-dark btn-lg" href="/sonar/project">File Upload & Scan</a>
+        <a type="button" class="btn btn-dark btn-lg" href="/login">Code Quality Reports</a>
+        <a type="button" class="btn btn-dark btn-lg" href="/logout">Logout</a>
     </div>
 </div>
 </body>

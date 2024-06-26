@@ -50,7 +50,7 @@ public class AuthenticationController {
 
 		request.getSession().setAttribute("loggedInUser", existing);
 
-		return "redirect:/users";
+		return "redirect:/dashboard";
 	}
 
 	@GetMapping("/logout")
@@ -99,6 +99,16 @@ public class AuthenticationController {
 		model.addAttribute("users", users);
 
 		return "users";
+	}
+
+	@GetMapping("/dashboard")
+	public String dashboard(HttpServletRequest request) {
+
+		if (!isUserLoggedIn(request.getSession(false))) {
+			return "redirect:/login";
+		}
+
+		return "dashboard";
 	}
 
 	private boolean isUserLoggedIn(HttpSession session) {
