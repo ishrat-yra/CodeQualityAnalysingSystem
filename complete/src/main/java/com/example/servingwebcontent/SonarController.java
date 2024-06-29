@@ -149,6 +149,39 @@ public class SonarController {
 		return "sonarProject";
 	}
 
+	@GetMapping("/report")
+	public String report(@RequestParam(defaultValue = "false") boolean create,
+					   Model model,
+					   HttpServletRequest request) {
+
+		if (!isUserLoggedIn(request.getSession(false))) {
+			return "redirect:/login";
+		}
+
+		model.addAttribute("allProjects", projectService.findAll());
+		model.addAttribute("createProject", create);
+
+		if (create) {
+			model.addAttribute("project", new SonarProject());
+		}
+
+		return "report";
+	}
+
+	@GetMapping("/reportDetails/{id}")
+	public String reportDetails(@PathVariable Long id,
+								 Model model,
+								 HttpServletRequest request) {
+
+		if (!isUserLoggedIn(request.getSession(false))) {
+			return "redirect:/login";
+		}
+
+		model.addAttribute("project", projectService.find(id));
+
+		return "reportDetails";
+	}
+
 	@GetMapping("/downloadReport/{projectKey}")
 	public void downloadReport(@PathVariable String projectKey,
 							   HttpServletRequest request,
