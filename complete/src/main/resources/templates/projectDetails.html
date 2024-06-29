@@ -85,7 +85,7 @@
 					<td th:text="${project.key}"></td>
 					<td th:text="${project.created}"></td>
 					<td>
-						<a th:href="@{/sonar/downloadReport/{projectKey}(projectKey=${project.key})}">Scan</a>
+						<a th:href="@{/sonar/runScanner/}">Scan</a>
 					</td>
 				</tr>
 			</tbody>

@@ -51,6 +51,9 @@ public class SonarController {
 	@Value("${api.password:}")
 	private String password;
 
+	@Value("${app.storage.unzip.path}")
+	private String unzipLocation;
+
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -155,7 +158,7 @@ public class SonarController {
 			return "redirect:/login";
 		}
 
-		scannerService.runSonarScannerAsync("SimpleSpringBoot", "/Users/yra/projects/therap/gs-serving-web-content/complete");
+		scannerService.runSonarScannerAsync("SimpleSpringBoot", unzipLocation + "/gs-serving-web-content/complete");
 
 		return "sonarProject";
 	}
