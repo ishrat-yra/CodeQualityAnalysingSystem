@@ -87,7 +87,7 @@ public class FileUploadController {
 
 		}
 
-		return "redirect:/attachment/";
+		return "redirect:/sonar/project";
 	}
 
 	@GetMapping("/unzip")

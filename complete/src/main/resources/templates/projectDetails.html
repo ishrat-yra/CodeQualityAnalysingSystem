@@ -31,10 +31,10 @@
 					<a class="nav-link" aria-current="page" th:href="@{/sonar/project}">File Upload & Scan</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" aria-current="page" th:href="@{/sonar/project?create=true}">SonarQube</a>
+					<a class="nav-link active" aria-current="page" th:href="@{/sonar/project?create=true}">SonarQube</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link active" aria-current="page" th:href="@{/sonar/report}">Code Quality Report</a>
+					<a class="nav-link" aria-current="page" th:href="@{/sonar/report}">Code Quality Report</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" aria-current="page" th:href="@{/logout}">Logout</a>
@@ -85,14 +85,37 @@
 					<td th:text="${project.key}"></td>
 					<td th:text="${project.created}"></td>
 					<td>
-						<a th:href="@{/sonar/downloadReport/{projectKey}(projectKey=${project.key})}">Download Report</a>
+						<a th:href="@{/sonar/downloadReport/{projectKey}(projectKey=${project.key})}">Scan</a>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 
+	<div class="container">
+		<div class="alert alert-danger" th:if="${message}">
+			<span th:text="${message}"/>
+		</div>
 
+		<div class="card-body">
+			<form method="POST" enctype="multipart/form-data" action="/attachment/">
+				<div class="mb-3">
+					<input class="form-control" type="file" id="formFile" name="file">
+				</div>
+				<div class="mb-3">
+					<input class="btn btn-primary" type="submit" value="Upload"/>
+				</div>
+			</form>
+		</div>
+
+		<div class="row">
+			<ul>
+				<li th:each="file : ${files}">
+					<a th:href="${file}" th:text="${file}" />
+				</li>
+			</ul>
+		</div>
+	</div>
 </div>
 </body>
 </html>

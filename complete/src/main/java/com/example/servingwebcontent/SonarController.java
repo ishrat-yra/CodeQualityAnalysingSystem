@@ -4,6 +4,7 @@ import com.example.dto.SonarProject;
 import com.example.entity.Project;
 import com.example.service.ProjectService;
 import com.example.service.SonarScannerService;
+import com.example.service.StorageService;
 import com.example.util.Url;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +23,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +31,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.springframework.web.servlet.view.UrlBasedViewResolver.REDIRECT_URL_PREFIX;
 /**
@@ -50,6 +53,9 @@ public class SonarController {
 
 	@Autowired
 	private RestTemplate restTemplate;
+
+	@Autowired
+	private StorageService storageService;
 
 	@Autowired
 	private SonarScannerService scannerService;
@@ -133,6 +139,11 @@ public class SonarController {
 		}
 
 		model.addAttribute("project", projectService.find(id));
+		model.addAttribute("files", storageService.loadAll().map(
+														  path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
+														 "serveFile", path.getFileName().toString()).build().toUri().toString())
+												  .collect(Collectors.toList()));
+
 
 		return "projectDetails";
 	}
