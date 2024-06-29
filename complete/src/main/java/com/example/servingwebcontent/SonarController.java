@@ -160,7 +160,7 @@ public class SonarController {
 
 		scannerService.runSonarScannerAsync("SimpleSpringBoot", unzipLocation + "/gs-serving-web-content/complete");
 
-		return "sonarProject";
+		return REDIRECT_URL_PREFIX + "/sonar/project";
 	}
 
 	@GetMapping("/report")
