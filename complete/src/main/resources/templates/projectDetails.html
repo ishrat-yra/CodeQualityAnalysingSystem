@@ -81,22 +81,12 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td>2024.6.0-0f3ce5aa4cf-12June</td>
-					<td>Completed</td>
-					<td>2024-06-13 01:56 AM</td>
-					<td class="center-text"><a th:href="@{/sonar/projectDetails/{id}(id=${project.id})}">Download Report</a></td>
-				</tr>
-				<tr>
-					<td>2024.5.2-May-26-27f115ed8a363</td>
-					<td>Completed</td>
-					<td>2024-06-20 08:45 AM</td>
-					<td class="center-text"><a th:href="@{/sonar/projectDetails/{id}(id=${project.id})}">Download Report</a></td>
-				</tr>
-				<tr>
-					<td>2024.4.5-redirectFixV3-Interceptor-19thMay</td>
-					<td>Pending</td>
-					<td>2024-06-27 02:00 PM</td>
-					<td class="center-text"></td>
+					<td th:text="${project.name}"></td>
+					<td th:text="${project.key}"></td>
+					<td th:text="${project.created}"></td>
+					<td>
+						<a th:href="@{/sonar/downloadReport/{projectKey}(projectKey=${project.key})}">Download Report</a>
+					</td>
 				</tr>
 			</tbody>
 		</table>

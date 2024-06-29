@@ -6,6 +6,7 @@ import com.example.service.ProjectService;
 import com.example.service.SonarScannerService;
 import com.example.util.Url;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.springframework.web.servlet.view.UrlBasedViewResolver.REDIRECT_URL_PREFIX;
@@ -116,7 +120,7 @@ public class SonarController {
 
 		projectService.saveProject(new Project(project.getName(), project.getKey()));
 
-		return REDIRECT_URL_PREFIX + "/project";
+		return REDIRECT_URL_PREFIX + "/sonar/project";
 	}
 
 	@GetMapping("/projectDetails/{id}")
@@ -143,6 +147,41 @@ public class SonarController {
 		scannerService.runSonarScannerAsync("SimpleSpringBoot", "/Users/yra/projects/therap/gs-serving-web-content/complete");
 
 		return "sonarProject";
+	}
+
+	@GetMapping("/downloadReport/{projectKey}")
+	public void downloadReport(@PathVariable String projectKey,
+							   HttpServletRequest request,
+							   HttpServletResponse response) throws IOException {
+
+		if (!isUserLoggedIn(request.getSession(false))) {
+			throw new RuntimeException("Something Went Wrong!");
+		}
+
+		String url = apiUrl + "/api/issues/search";
+		String auth = username + ":" + password;
+		byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
+		String authHeader = "Basic " + new String(encodedAuth);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", authHeader);
+
+		// Set up query parameters
+		Map<String, String> params = new HashMap<>();
+		params.put("projects", projectKey);
+		params.put("format", "json");
+
+		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(headers);
+
+		String  responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, params).getBody();
+
+		// Set response headers
+		response.setContentType("application/json");
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"data.json\"");
+
+		System.out.println("TEST3");
+		// Write JSON to response
+		response.getWriter().write(responseEntity);
 	}
 
 //	@GetMapping("/files/{filename:.+}")
