@@ -2,7 +2,9 @@ package com.example.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author ishrat.jahan
@@ -25,6 +27,9 @@ public class Project {
     @Column(name = "created")
     private Date created;
 
+    @OneToMany
+    List<Scans> scans;
+
     public Project() {
     }
 
@@ -32,6 +37,7 @@ public class Project {
         this.name = name;
         this.key = key;
         this.created = new Date();
+        this.scans = new ArrayList<>();
     }
 
     public Long getId() {
@@ -64,5 +70,13 @@ public class Project {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public List<Scans> getScans() {
+        return scans;
+    }
+
+    public void setScans(List<Scans> scans) {
+        this.scans = scans;
     }
 }

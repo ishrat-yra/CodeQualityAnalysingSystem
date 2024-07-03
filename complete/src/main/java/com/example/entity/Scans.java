@@ -25,15 +25,18 @@ public class Scans {
     @Column(name = "created")
     private Date uploadDate;
 
-    @OneToOne
+    @ManyToOne
     private User uploadedBy;
+
+    @Column(name = "reportPayload")
+    private String reportPayload;
 
     public Scans() {
     }
 
-    public Scans(String name, String key, User user) {
-        this.fileName = name;
-        this.filePath = key;
+    public Scans(String fileName, String filePath, User user) {
+        this.fileName = fileName;
+        this.filePath = filePath;
         this.uploadDate = new Date();
         this.uploadedBy = user;
     }
@@ -77,4 +80,13 @@ public class Scans {
     public void setUploadedBy(User uploadedBy) {
         this.uploadedBy = uploadedBy;
     }
+
+    public String getReportPayload() {
+        return reportPayload;
+    }
+
+    public void setReportPayload(String reportPayload) {
+        this.reportPayload = reportPayload;
+    }
+
 }

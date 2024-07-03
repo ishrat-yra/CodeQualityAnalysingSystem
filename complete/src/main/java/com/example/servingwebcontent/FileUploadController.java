@@ -1,8 +1,9 @@
 package com.example.servingwebcontent;
 
-import com.example.service.StorageException;
-import com.example.service.StorageFileNotFoundException;
-import com.example.service.StorageService;
+import com.example.entity.Project;
+import com.example.entity.Scans;
+import com.example.entity.User;
+import com.example.service.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -27,12 +28,14 @@ import com.example.util.FileUtils;
 @RequestMapping("/attachment")
 public class FileUploadController {
 
-	private final StorageService storageService;
+	@Autowired
+	private StorageService storageService;
 
 	@Autowired
-	public FileUploadController(StorageService storageService) {
-		this.storageService = storageService;
-	}
+	private ScanService scanService;
+
+	@Autowired
+	private ProjectService projectService;
 
 	@GetMapping("/")
 	public String listUploadedFiles(Model model, HttpServletRequest request) throws IOException {
@@ -63,7 +66,8 @@ public class FileUploadController {
 	}
 
 	@PostMapping("/")
-	public String handleFileUpload(@RequestParam("file") MultipartFile file,
+	public String handleFileUpload(@RequestParam MultipartFile file,
+								   @RequestParam Long projectId,
 								   HttpServletRequest request,
 								   RedirectAttributes redirectAttributes) {
 
@@ -78,6 +82,27 @@ public class FileUploadController {
 
 		try {
 			storageService.store(file);
+
+			// unzip
+			// save path and other info in db
+			// map with projectja
+
+			System.out.println("projectId : " + projectId);
+			System.out.println("getName : " + file.getName());
+			System.out.println("getOriginalFilename : " + file.getOriginalFilename());
+
+			Scans scans = new Scans(file.getOriginalFilename(),
+									file.getOriginalFilename().replace(".zip", ""),
+									(User) request.getSession().getAttribute("loggedInUser"));
+
+			scanService.saveScan(scans);
+
+			storageService.unzip(file.getOriginalFilename());
+
+			Project project = projectService.find(projectId);
+			project.getScans().add(scans);
+			projectService.saveProject(project);
+
 			redirectAttributes.addFlashAttribute("message",
 												 "You successfully uploaded " + file.getOriginalFilename());
 

@@ -231,44 +231,6 @@ public class SonarController {
 		response.getWriter().write(responseEntity);
 	}
 
-//	@GetMapping("/files/{filename:.+}")
-//	@ResponseBody
-//	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-//
-//		Resource file = storageService.loadAsResource(filename);
-//
-//		if (file == null)
-//			return ResponseEntity.notFound().build();
-//
-//		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-//				"attachment; filename=\"" + file.getFilename() + "\"").body(file);
-//	}
-//
-//	@PostMapping("/")
-//	public String handleFileUpload(@RequestParam("file") MultipartFile file,
-//								   HttpServletRequest request,
-//								   RedirectAttributes redirectAttributes) {
-//
-//		if (!isUserLoggedIn(request.getSession(false))) {
-//			return "redirect:/login";
-//		}
-//
-//		storageService.store(file);
-//		redirectAttributes.addFlashAttribute("message",
-//				"You successfully uploaded " + file.getOriginalFilename() + "!");
-//
-//		return "redirect:/attachment/";
-//	}
-//
-//	@ExceptionHandler(StorageFileNotFoundException.class)
-//	public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
-//		return ResponseEntity.notFound().build();
-//	}
-//
-//	private boolean isUserLoggedIn(HttpSession session) {
-//		return Objects.nonNull(session) && Objects.nonNull(session.getAttribute("loggedInUser"));
-//	}
-
 	private boolean isUserLoggedIn(HttpSession session) {
 		return Objects.nonNull(session) && Objects.nonNull(session.getAttribute("loggedInUser"));
 	}

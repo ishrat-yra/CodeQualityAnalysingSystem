@@ -74,16 +74,14 @@
 			<thead class="table-dark">
 				<tr>
 					<th>Scan Name</th>
-					<th>Status</th>
 					<th>Uploaded</th>
 					<th>Action</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td th:text="${project.name}"></td>
-					<td th:text="${project.key}"></td>
-					<td th:text="${project.created}"></td>
+				<tr th:each="scan : ${project.getScans()}">
+					<td th:text="${scan.filePath}"></td>
+					<td th:text="${scan.uploadDate}"></td>
 					<td>
 						<a th:href="@{/sonar/runScanner}">Scan</a>
 					</td>
@@ -100,20 +98,15 @@
 		<div class="card-body">
 			<form method="POST" enctype="multipart/form-data" action="/attachment/">
 				<div class="mb-3">
+					<input class="form-control" type="hidden" id="projectId" name="projectId" th:value="${project.id}">
+				</div>
+				<div class="mb-3">
 					<input class="form-control" type="file" id="formFile" name="file">
 				</div>
 				<div class="mb-3">
 					<input class="btn btn-primary" type="submit" value="Upload"/>
 				</div>
 			</form>
-		</div>
-
-		<div class="row">
-			<ul>
-				<li th:each="file : ${files}">
-					<a th:href="${file}" th:text="${file}" />
-				</li>
-			</ul>
 		</div>
 	</div>
 </div>

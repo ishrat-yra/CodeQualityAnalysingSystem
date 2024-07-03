@@ -62,7 +62,8 @@ public class FileSystemStorageService implements StorageService {
 	public void unzip(String fileName) {
 		try {
 
-			ZipUnzipUtils.unzip(this.zipLocation.toString() + "/" + fileName, this.unzipLocation.toString());
+			ZipUnzipUtils.unzip(this.zipLocation.toString() + "/" + fileName,
+								this.unzipLocation.toString() + "/" + fileName.replace(".zip", ""));
 
 		} catch (IOException e) {
 			throw new StorageException("Failed to store file.", e);

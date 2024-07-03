@@ -1,7 +1,6 @@
 package com.example.repository;
 
-import com.example.entity.ScannerResult;
-import com.example.entity.User;
+import com.example.entity.Scans;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * @since 03/28,2024
  */
 @Repository
-public interface ScannerRepository extends JpaRepository<ScannerResult, Long> {
+public interface ScanRepository extends JpaRepository<Scans, Long> {
 }
